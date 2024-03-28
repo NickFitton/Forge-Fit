@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-navigation/material-top-tabs": "^6.6.13",
     "@types/react": "~18.2.45",
     "date-fns": "^3.6.0",
     "expo": "~50.0.14",

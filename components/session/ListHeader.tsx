@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export const ListHeader = ({
   date,
@@ -10,8 +11,8 @@ export const ListHeader = ({
 }) => (
   <View style={styles.content}>
     <Text style={styles.date}>{format(date, 'MMMM do')}</Text>
-    <TouchableOpacity onPress={onCreateSession} style={styles.button}>
-      <Text style={styles.buttonText}>+</Text>
+    <TouchableOpacity onPress={onCreateSession}>
+      <Ionicons name="add-circle" size={60} color="#2c7a95" />
     </TouchableOpacity>
   </View>
 );
@@ -27,14 +28,7 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 24,
   },
-  button: {
-    backgroundColor: '#2c7a95',
-    height: 48,
-    aspectRatio: 1,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  button: {},
   buttonText: {
     color: '#eee',
     fontSize: 20,

@@ -4,95 +4,28 @@ import {
   Text,
   SafeAreaView,
   StyleSheet,
-  SectionList,
   TouchableOpacity,
 } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Href } from 'expo-router/build/link/href';
 
-type Session = {
-  day: number;
-  activities: number;
-  start: string;
-  end: string;
-};
-const generateMonthData = () =>
-  new Array(Math.floor(Math.random() * 20))
-    .fill(0)
-    .map(() => {
-      const day = Math.floor(Math.random() * 29);
-      const startMins = 360 + Math.floor(Math.random() * 180);
-      const duration = 30 + Math.floor(Math.random() * 60);
-      const endMins = startMins + duration;
-      const activities = 4 + Math.floor(Math.random() * 5);
-      const start = `${Math.floor(startMins / 60)
-        .toString()
-        .padStart(2, '0')}:${(startMins % 60).toString().padStart(2, '0')}`;
-      const end = `${Math.floor(endMins / 60)
-        .toString()
-        .padStart(2, '0')}:${(endMins % 60).toString().padStart(2, '0')}`;
-      return {
-        day,
-        activities,
-        start,
-        end,
-      };
-    })
-    .sort((a, b) => b.day - a.day);
-
-const MOCK_DATA = [
-  {
-    title: 'March 2024',
-    data: generateMonthData(),
-  },
-  {
-    title: 'February 2024',
-    data: generateMonthData(),
-  },
-  {
-    title: 'January 2024',
-    data: generateMonthData(),
-  },
-];
-
-const SessionHeader = () => {
-  return (
-    <View>
-      <Link href="/calendar" asChild>
-        <TouchableOpacity style={styles.sessionHeader}>
-          <Text style={[styles.text, styles.sessionHeaderText]}>
-            Go to calendar ►
-          </Text>
-        </TouchableOpacity>
-      </Link>
-    </View>
-  );
+type LinkRowProps = {
+  href: Href;
+  iconName: React.ComponentProps<typeof Ionicons>['name'];
+  text: string;
 };
 
-const MonthHeader = ({ month }: { month: string }) => {
+const LinkRow = ({ href, iconName, text }: LinkRowProps) => {
   return (
-    <View style={styles.header}>
-      <Text style={[styles.text, styles.headerText]}>{month}</Text>
-    </View>
-  );
-};
-
-const SessionItem = (data: Session) => {
-  return (
-    <View style={styles.sessionItem}>
-      <View style={styles.sessionDetails}>
-        <Text style={[styles.headerText, styles.bigText, styles.text]}>
-          {data.day}
-        </Text>
-        <View style={styles.sessionTime}>
-          <Text style={styles.text}>{data.start}</Text>
-          <View style={styles.separator} />
-          <Text style={styles.text}>{data.end}</Text>
+    <Link href={href} asChild>
+      <TouchableOpacity style={styles.sessionHeader}>
+        <View style={styles.textContent}>
+          <Ionicons name={iconName} color="#eee" size={24} />
+          <Text style={[styles.text, styles.sessionHeaderText]}>{text}</Text>
         </View>
-      </View>
-      <Text>{data.activities} activities</Text>
-      <TouchableOpacity style={[styles.sessionLink]}>
-        <Text style={[styles.text, styles.linkText]}>View ►</Text>
+        <Ionicons name="caret-forward" color="#eee" />
       </TouchableOpacity>
-    </View>
+    </Link>
   );
 };
 
@@ -100,14 +33,8 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.layout}>
       <Stack.Screen options={{ title: 'Progress' }} />
-      <SectionList
-        sections={MOCK_DATA}
-        renderItem={(data) => <SessionItem {...data.item} />}
-        renderSectionHeader={(info) => (
-          <MonthHeader month={info.section.title} />
-        )}
-        ListHeaderComponent={SessionHeader}
-      />
+      <LinkRow href="/calendar" iconName="calendar" text="Go to calendar" />
+      <LinkRow href="/session" iconName="add" text="Start a session" />
     </SafeAreaView>
   );
 }
@@ -120,8 +47,15 @@ const styles = StyleSheet.create({
   },
   sessionHeader: {
     backgroundColor: '#2c7a95',
-    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 8,
+  },
+  textContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   sessionHeaderText: {
     color: '#eee',

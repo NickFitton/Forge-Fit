@@ -5,7 +5,7 @@ import {
   setDate,
   subMonths,
 } from 'date-fns';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import {
   View,
   Text,
@@ -15,10 +15,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { CalendarMonth } from '../components/CalendarMonth';
-import { ReactNode, useMemo, useState } from 'react';
-import { ActivityData, CardioData } from '../api/activity/types';
-import { WeightActivity } from '../components/WeightActivity';
+import { useMemo, useState } from 'react';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { ActivityData } from '../api/activity/types';
 import { ListHeader } from '../components/session/ListHeader';
+import { SessionActivity } from '../components/SessionActivity';
 
 const useSessions = (date: Date): number[] => {
   const firstDayOfMonth = setDate(date, 1);
@@ -43,6 +44,7 @@ const useDaysSessions = (date: Date): SessionData[] => {
     {
       data: [
         {
+          createdAt: new Date(),
           type: 'cardio',
           action: 'Run',
           distance: 1.33,
@@ -51,6 +53,7 @@ const useDaysSessions = (date: Date): SessionData[] => {
           calories: 110,
         },
         {
+          createdAt: new Date(),
           type: 'weight',
           action: 'Chest press',
           weight: 35,
@@ -59,6 +62,7 @@ const useDaysSessions = (date: Date): SessionData[] => {
           failed: false,
         },
         {
+          createdAt: new Date(),
           type: 'weight',
           action: 'Assist dip',
           weight: -35,
@@ -67,6 +71,7 @@ const useDaysSessions = (date: Date): SessionData[] => {
           failed: false,
         },
         {
+          createdAt: new Date(),
           type: 'weight',
           action: 'Assisted chin',
           weight: -50,
@@ -75,6 +80,7 @@ const useDaysSessions = (date: Date): SessionData[] => {
           failed: false,
         },
         {
+          createdAt: new Date(),
           type: 'weight',
           action: 'Shoulder press',
           weight: 20,
@@ -83,6 +89,7 @@ const useDaysSessions = (date: Date): SessionData[] => {
           failed: true,
         },
         {
+          createdAt: new Date(),
           type: 'weight',
           action: 'Seated leg press',
           weight: 125,
@@ -91,6 +98,7 @@ const useDaysSessions = (date: Date): SessionData[] => {
           failed: false,
         },
         {
+          createdAt: new Date(),
           type: 'weight',
           action: 'Leg extension',
           weight: 65,
@@ -99,6 +107,7 @@ const useDaysSessions = (date: Date): SessionData[] => {
           failed: false,
         },
         {
+          createdAt: new Date(),
           type: 'cardio',
           action: 'Walk',
           distance: 0.17,
@@ -152,7 +161,7 @@ export default function Home() {
           style={styles.monthTogglePart}
           onPress={onPreviousMonth}
         >
-          <Text>◄</Text>
+          <Ionicons name="caret-back" color="#eee" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.monthTogglePart} onPress={setToToday}>
           <Text style={styles.alignMiddle}>
@@ -163,7 +172,7 @@ export default function Home() {
           style={[styles.monthTogglePart, styles.alignEnd]}
           onPress={onNextMonth}
         >
-          <Text>►</Text>
+          <Ionicons name="caret-forward" color="#eee" />
         </TouchableOpacity>
       </View>
       <CalendarMonth
@@ -171,7 +180,10 @@ export default function Home() {
         highlightDays={daysWithSessions}
         onDayPressed={onDayPressed}
       />
-      <ListHeader date={dateViewed} onCreateSession={() => {}} />
+      <ListHeader
+        date={dateViewed}
+        onCreateSession={() => router.navigate('/session')}
+      />
       <SectionList
         sections={daysSessions}
         renderItem={(data) => <SessionActivity {...data.item} />}
@@ -191,19 +203,6 @@ const SessionHeader = (data: SessionData) => {
   );
 };
 
-const SessionActivity = (data: ActivityData): ReactNode => {
-  switch (data.type) {
-    case 'weight':
-      return <WeightActivity {...data} />;
-    case 'cardio':
-      return <CardioActivity {...data} />;
-  }
-};
-
-const CardioActivity = (data: CardioData) => {
-  return <View></View>;
-};
-
 const styles = StyleSheet.create({
   layout: {
     backgroundColor: '#122221',
@@ -218,9 +217,11 @@ const styles = StyleSheet.create({
   monthTogglePart: {
     flex: 1 / 3,
     padding: 8,
+    justifyContent: 'center',
   },
   alignMiddle: {
     textAlign: 'center',
+    color: '#eee',
   },
   alignEnd: {
     alignItems: 'flex-end',

@@ -1,7 +1,23 @@
+import { ReactNode } from 'react';
+import { ActivityData, CardioData } from '../api/activity/types';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { WeightData } from '../api/activity/types';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-export const WeightActivity = (data: WeightData) => {
+export const SessionActivity = (data: ActivityData): ReactNode => {
+  switch (data.type) {
+    case 'weight':
+      return <WeightActivity {...data} />;
+    case 'cardio':
+      return <CardioActivity {...data} />;
+  }
+};
+
+const CardioActivity = (data: CardioData) => {
+  return <View></View>;
+};
+
+const WeightActivity = (data: WeightData) => {
   return (
     <TouchableOpacity style={styles.container}>
       <View>
@@ -14,7 +30,7 @@ export const WeightActivity = (data: WeightData) => {
           <Text>{data.sets} sets</Text>
           <Text>{data.reps} reps</Text>
         </View>
-        <Text>►</Text>
+        <Ionicons name="caret-forward" color="#000" />
       </View>
     </TouchableOpacity>
   );

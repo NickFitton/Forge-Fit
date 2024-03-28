@@ -1,4 +1,5 @@
 export type WeightData = {
+  createdAt: Date;
   action: string;
   weight: number;
   reps: number;
@@ -6,6 +7,7 @@ export type WeightData = {
   failed: boolean;
 };
 export type CardioData = {
+  createdAt: Date;
   action: string;
   distance: number;
   timeMins: number;
