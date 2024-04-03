@@ -2,7 +2,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  ButtonProps,
   TouchableOpacityProps,
 } from 'react-native';
 

@@ -1,10 +1,9 @@
 import { ReactNode } from 'react';
-import { ActivityData, CardioData } from '../api/activity/types';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { WeightData } from '../api/activity/types';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { CardioData, WeightData } from '../hooks/db/session';
 
-export const SessionActivity = (data: ActivityData): ReactNode => {
+export const SessionActivity = (data: CardioData | WeightData): ReactNode => {
   switch (data.type) {
     case 'weight':
       return <WeightActivity {...data} />;
@@ -41,8 +40,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     padding: 8,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
   },
   activity: {
     fontSize: 16,

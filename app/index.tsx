@@ -1,4 +1,4 @@
-import { Link, Stack } from 'expo-router';
+import { Link, router, Stack } from 'expo-router';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Href } from 'expo-router/build/link/href';
+import { useCreateSession } from '../hooks/db/session';
 
 type LinkRowProps = {
   href: Href;
@@ -30,11 +31,41 @@ const LinkRow = ({ href, iconName, text }: LinkRowProps) => {
 };
 
 export default function Home() {
+  const mutation = useCreateSession();
+
+  const createSession = () => {
+    mutation.mutate(null, {
+      onSuccess: ([{ createdId }]) => {
+        router.navigate(`/sessions/${createdId}`);
+      },
+    });
+  };
+
   return (
     <SafeAreaView style={styles.layout}>
       <Stack.Screen options={{ title: 'Progress' }} />
       <LinkRow href="/calendar" iconName="calendar" text="Go to calendar" />
       <LinkRow href="/session" iconName="add" text="Start a session" />
+      <View style={styles.bigButtonContainer}>
+        <TouchableOpacity style={styles.bigButton} onPress={createSession}>
+          <Ionicons name="add" size={48} color="#eee" />
+          <Text style={[styles.text, styles.sessionHeaderText]}>
+            Start a session
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.bigButton}>
+          <Ionicons name="calendar" size={48} color="#eee" />
+          <Text style={[styles.text, styles.sessionHeaderText]}>
+            Go to calendar
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.bigButton}>
+          <Ionicons name="add" size={48} color="#eee" />
+          <Text style={[styles.text, styles.sessionHeaderText]}>
+            Third button
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -44,6 +75,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#122221',
     height: '100%',
     maxHeight: '100%',
+  },
+  bigButtonContainer: {
+    padding: 16,
+    flexDirection: 'row',
+    gap: 8,
+  },
+  bigButton: {
+    backgroundColor: '#2c7a95',
+    aspectRatio: 1,
+    borderRadius: 16,
+    padding: 8,
+    flex: 1 / 3,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   sessionHeader: {
     backgroundColor: '#2c7a95',

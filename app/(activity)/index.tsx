@@ -8,51 +8,60 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   LayoutChangeEvent,
+  SafeAreaView,
+  Button,
 } from 'react-native';
 import { CountToggle } from '../../components/CountToggle';
 import { CTAButton } from '../../components/Button';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import {
+  Exercise,
+  InsertExercise,
+  useCreateExercises,
+  useExercises,
+} from '../../hooks/db/exercises';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCreateSessionWeightExercise } from '../../hooks/db/session';
+import {
+  useGlobalSearchParams,
+  usePathname,
+  useRouteInfo,
+} from 'expo-router/build/hooks';
 
 type ExerciseSet = { name: string; data: ExerciseInfo[] };
 type ExerciseInfo = {
   name: string;
 };
 type ActivityData = {
+  exerciseId: number;
   exercise: string;
   weight: number;
   reps: number;
   sets: number;
 };
 
-const DATA: ExerciseSet[] = [
-  {
-    name: 'Machines',
-    data: [
-      { name: 'Seated Row' },
-      { name: 'Leg Curl' },
-      { name: 'Chest Press' },
-      { name: 'Incline Press' },
-      { name: 'Assisted Dip' },
-      { name: 'Assisted Chin' },
-      { name: 'Shoulder Press' },
-      { name: 'Seated Leg Press' },
-      { name: 'Leg Extension' },
-      { name: 'Pectoral Fly' },
-      { name: 'Rear Delt' },
-      { name: 'Abdominal' },
-      { name: 'Hip Abduction' },
-      { name: 'Hip Adduction' },
-      { name: 'Calf Extension' },
-      { name: 'Triceps Press' },
-      { name: 'Triceps Extension' },
-      { name: 'Biceps Curl' },
-      { name: 'Lateral Raise' },
-    ].sort((a, b) => a.name.localeCompare(b.name)),
-  },
-  {
-    name: 'Free weights',
-    data: [{ name: 'Leg curl' }, { name: 'Seated leg row' }],
-  },
+const DEFAULT_WEIGHT_EXERCISES: InsertExercise[] = [
+  { type: 'weight', name: 'Seated Row', category: 'machines' },
+  { type: 'weight', name: 'Leg Curl', category: 'machines' },
+  { type: 'weight', name: 'Chest Press', category: 'machines' },
+  { type: 'weight', name: 'Incline Press', category: 'machines' },
+  { type: 'weight', name: 'Assisted Dip', category: 'machines' },
+  { type: 'weight', name: 'Assisted Chin', category: 'machines' },
+  { type: 'weight', name: 'Shoulder Press', category: 'machines' },
+  { type: 'weight', name: 'Seated Leg Press', category: 'machines' },
+  { type: 'weight', name: 'Leg Extension', category: 'machines' },
+  { type: 'weight', name: 'Pectoral Fly', category: 'machines' },
+  { type: 'weight', name: 'Rear Delt', category: 'machines' },
+  { type: 'weight', name: 'Abdominal', category: 'machines' },
+  { type: 'weight', name: 'Hip Abduction', category: 'machines' },
+  { type: 'weight', name: 'Hip Adduction', category: 'machines' },
+  { type: 'weight', name: 'Calf Extension', category: 'machines' },
+  { type: 'weight', name: 'Triceps Press', category: 'machines' },
+  { type: 'weight', name: 'Triceps Extension', category: 'machines' },
+  { type: 'weight', name: 'Biceps Curl', category: 'machines' },
+  { type: 'weight', name: 'Lateral Raise', category: 'machines' },
+  { name: 'Leg curl', type: 'weight', category: 'free_weights' },
+  { name: 'Seated leg row', type: 'weight', category: 'free_weights' },
 ];
 
 const itemsEqual = (a: [string, string], b: [string, string]): boolean => {
@@ -65,6 +74,8 @@ const itemsEqual = (a: [string, string], b: [string, string]): boolean => {
 export default function Weight() {
   const [openItem, setOpenItem] = useState<[string, string]>();
   const [viewTop, setViewTop] = useState<number>();
+  const { data: exercises, isLoading, isError, error } = useExercises('weight');
+  // const mutate = useCreateSessionWeightExercise(parseInt(params.sessionId!));
 
   const toggleActivity = (item: [string, string]) => {
     setOpenItem((pItem) => (itemsEqual(pItem, item) ? undefined : item));
@@ -76,10 +87,26 @@ export default function Weight() {
   };
   const createActivity = (data: ActivityData) => {
     setOpenItem(undefined);
-    console.log(data);
+    // mutate.mutate(data);
     // Mutate activity with session
     router.back();
   };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView>
+        <Text>Exercises loading...</Text>
+      </SafeAreaView>
+    );
+  }
+  if (isError) {
+    return (
+      <SafeAreaView>
+        <Text>Something went wrong</Text>
+        <Text>{JSON.stringify(error)}</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <View onLayout={determineTop}>
@@ -93,7 +120,8 @@ export default function Weight() {
         </View>
         <SectionList
           style={styles.sectionList}
-          sections={DATA}
+          sections={exercises}
+          ListEmptyComponent={OfferExercises}
           ItemSeparatorComponent={Divider}
           renderItem={({ item, section }) => (
             <ActivityItem
@@ -113,6 +141,30 @@ export default function Weight() {
     </View>
   );
 }
+
+const OfferExercises = () => {
+  const mutation = useCreateExercises();
+  const client = useQueryClient();
+
+  const createDefaultExercises = () => {
+    mutation.mutate(DEFAULT_WEIGHT_EXERCISES, {
+      onSuccess: () =>
+        client.invalidateQueries({
+          queryKey: ['exercises'],
+        }),
+    });
+  };
+
+  return (
+    <View>
+      <Text>{mutation.isError ? 'true' : 'false'}</Text>
+      <Text>{JSON.stringify(mutation.error)}</Text>
+      <Text>It looks like you haven't created any exercises yet.</Text>
+      <Text>Would you like to load some defaults?</Text>
+      <Button title="Yes Please" onPress={createDefaultExercises} />
+    </View>
+  );
+};
 
 const Divider = () => (
   <View style={{ borderBottomWidth: 1, borderColor: '#aaa' }} />
@@ -134,7 +186,7 @@ const ActivityItem = ({
 }: {
   onActivityPressed: () => void;
   onActivitySubmitted: (data: ActivityData) => void;
-  info: ExerciseInfo;
+  info: Omit<Exercise, 'category'>;
   isOpen: boolean;
 }) => {
   return (
@@ -145,7 +197,11 @@ const ActivityItem = ({
       {isOpen ? (
         <ActionInput
           onAdd={(data) =>
-            onActivitySubmitted({ ...data, exercise: info.name })
+            onActivitySubmitted({
+              ...data,
+              exercise: info.name,
+              exerciseId: info.id,
+            })
           }
         />
       ) : null}
@@ -156,7 +212,7 @@ const ActivityItem = ({
 const ActionInput = ({
   onAdd,
 }: {
-  onAdd: (data: Omit<ActivityData, 'exercise'>) => void;
+  onAdd: (data: Omit<ActivityData, 'exercise' | 'exerciseId'>) => void;
 }) => {
   const [reps, setReps] = useState(12);
   const [sets, setSets] = useState(3);
@@ -181,6 +237,7 @@ const ActionInput = ({
       <View style={actionStyles.inputWrapper}>
         <Text style={actionStyles.countName}>Weight (kg)</Text>
         <TextInput
+          autoFocus
           style={[
             actionStyles.weight,
             inputError ? actionStyles.weightError : {},
