@@ -72,10 +72,13 @@ const itemsEqual = (a: [string, string], b: [string, string]): boolean => {
 };
 
 export default function Weight() {
+  const params = useLocalSearchParams<{ sessionId: string }>();
+  const sessionId = parseInt(params.sessionId!);
   const [openItem, setOpenItem] = useState<[string, string]>();
   const [viewTop, setViewTop] = useState<number>();
   const { data: exercises, isLoading, isError, error } = useExercises('weight');
-  // const mutate = useCreateSessionWeightExercise(parseInt(params.sessionId!));
+  console.log(params);
+  const mutate = useCreateSessionWeightExercise(sessionId);
 
   const toggleActivity = (item: [string, string]) => {
     setOpenItem((pItem) => (itemsEqual(pItem, item) ? undefined : item));
@@ -87,7 +90,7 @@ export default function Weight() {
   };
   const createActivity = (data: ActivityData) => {
     setOpenItem(undefined);
-    // mutate.mutate(data);
+    mutate.mutate(data);
     // Mutate activity with session
     router.back();
   };

@@ -115,7 +115,7 @@ export const useCreateSessionWeightExercise = (sessionId: number) => {
   return useMutation<
     InsertSessionWeightExercise[],
     unknown,
-    Omit<InsertSessionWeightExercise, 'sessionId'>
+    Omit<InsertSessionWeightExercise, 'sessionId'> & { exercise: string }
   >({
     mutationKey: ['create', 'sessions', sessionId, 'sessionWeightExercises'],
     mutationFn: (exercise) =>
@@ -123,14 +123,14 @@ export const useCreateSessionWeightExercise = (sessionId: number) => {
         .insert(sessionWeightExercises)
         .values({ ...exercise, sessionId })
         .returning(),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       client.setQueryData<SessionWeightExercisesQueryData>(
         ['sessions', sessionId, 'sessionWeightExercises'],
         (pData) => {
           return [
             ...data.map((d) => ({
               ...d,
-              exercise: { name: 'derp' },
+              exercise: { name: variables.exercise },
               id: d.id!,
               createdAt: d.createdAt!,
             })),
@@ -143,6 +143,18 @@ export const useCreateSessionWeightExercise = (sessionId: number) => {
     onError: (e) => {
       console.error(e);
     },
+  });
+};
+
+export const useEndSession = (id: number) => {
+  const db = useDb();
+
+  return useMutation({
+    mutationFn: () =>
+      db
+        .update(sessions)
+        .set({ endTime: new Date().toISOString() })
+        .where(eq(sessions.id, id)),
   });
 };
 

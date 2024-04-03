@@ -40,7 +40,7 @@ export default function Layout() {
           }}
         >
           <Stack.Screen
-            name="(activity)"
+            name="activity"
             options={{
               presentation: 'modal',
               title: 'Activity',

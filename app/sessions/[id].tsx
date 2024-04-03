@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { Link, Stack, useLocalSearchParams } from 'expo-router';
+import { Link, router, Stack, useLocalSearchParams } from 'expo-router';
 import {
   Text,
   View,
@@ -11,15 +11,24 @@ import {
 } from 'react-native';
 import { SessionActivity } from '../../components/SessionActivity';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useSession, useSessionExercises } from '../../hooks/db/session';
+import {
+  useEndSession,
+  useSession,
+  useSessionExercises,
+} from '../../hooks/db/session';
 
 export default function Session() {
   const params = useLocalSearchParams<{ id: string }>();
   const sessionId = parseInt(params.id!);
   const sessionQuery = useSession(sessionId);
   const exercisesQuery = useSessionExercises(sessionId);
+  const endSession = useEndSession(sessionId);
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    endSession.mutate(null, {
+      onSuccess: () => router.back(),
+    });
+  };
 
   if (sessionQuery.isLoading || exercisesQuery.isLoading) {
     return (
@@ -56,7 +65,7 @@ export default function Session() {
         data={exercisesQuery.data}
         renderItem={(data) => <SessionActivity {...data.item} />}
       />
-      <Link href="/(activity)" asChild>
+      <Link href={`/activity?sessionId=${params.id!}`} asChild>
         <TouchableOpacity style={styles.addButton}>
           <Ionicons name="add" color="#eee" size={32} />
         </TouchableOpacity>
