@@ -176,17 +176,15 @@ export const useCreateSessionCardioExercise = (sessionId: number) => {
     onSuccess: (data, variables) => {
       client.setQueryData<SessionCardioExercisesQueryData>(
         ['sessions', sessionId, 'sessionCardioExercises'],
-        (pData) => {
-          return [
-            ...data.map((d) => ({
-              ...d,
-              exercise: { name: variables.exercise },
-              id: d.id!,
-              createdAt: d.createdAt!,
-            })),
-            ...pData,
-          ];
-        }
+        (pData) => [
+          ...data.map((d) => ({
+            ...d,
+            exercise: { name: variables.exercise },
+            id: d.id!,
+            createdAt: d.createdAt!,
+          })),
+          ...pData,
+        ]
       );
       data;
     },
@@ -256,7 +254,7 @@ const mergeExercises = (
   return [
     ...weight.map<WeightData>((exercise) => ({
       type: 'weight',
-      createdAt: new Date(exercise.createdAt),
+      createdAt: new Date(exercise.createdAt + '+00:00'),
       action: exercise.exercise.name,
       weight: exercise.weight,
       reps: exercise.reps,
@@ -267,7 +265,7 @@ const mergeExercises = (
       const secs = exercise.time % 60;
       return {
         type: 'cardio',
-        createdAt: new Date(exercise.createdAt),
+        createdAt: new Date(exercise.createdAt + '+00:00'),
         action: exercise.exercise.name,
         distance: exercise.distance,
         timeMins: mins,
@@ -275,5 +273,5 @@ const mergeExercises = (
         calories: exercise.calories,
       };
     }),
-  ];
+  ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 };
