@@ -7,6 +7,7 @@ import migrations from '../drizzle/migrations';
 import { DrizzleDbProvider } from '../providers/DrizzleDb';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as schema from '../db/schema';
+import { StatusBar } from 'expo-status-bar';
 
 const expoDb = openDatabaseSync('db.db');
 const db = drizzle(expoDb, { schema });
@@ -30,6 +31,7 @@ export default function Layout() {
   }
   return (
     <QueryClientProvider client={queryClient}>
+      <StatusBar style="light" />
       <DrizzleDbProvider value={db}>
         <Stack
           screenOptions={{
@@ -39,8 +41,9 @@ export default function Layout() {
             headerTintColor: '#eee',
           }}
         >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen
-            name="activity"
+            name="activity/index"
             options={{
               presentation: 'modal',
               title: 'Activity',

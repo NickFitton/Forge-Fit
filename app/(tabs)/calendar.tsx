@@ -8,16 +8,16 @@ import {
   SectionList,
   TouchableOpacity,
 } from 'react-native';
-import { CalendarMonth } from '../components/CalendarMonth';
+import { CalendarMonth } from '../../components/CalendarMonth';
 import { useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { ListHeader } from '../components/session/ListHeader';
-import { SessionActivity } from '../components/SessionActivity';
+import { ListHeader } from '../../components/session/ListHeader';
+import { SessionActivity } from '../../components/SessionActivity';
 import {
   SessionData,
   useSessionCalendarDays,
   useSessionsInDay,
-} from '../hooks/db/session';
+} from '../../hooks/db/session';
 
 const todaysDate = new Date();
 

@@ -13,7 +13,7 @@ import {
   sessionWeightExercises,
 } from '../../db/schema';
 import { and, eq, gte, lte } from 'drizzle-orm';
-import { getDate, getDay, getDaysInMonth, set, setDate } from 'date-fns';
+import { getDate, getDaysInMonth, set, setDate } from 'date-fns';
 import { ActivityData } from '../../api/activity/types';
 
 export type WeightData = {
@@ -198,6 +198,7 @@ export const useCreateSessionCardioExercise = (sessionId: number) => {
 
 export const useEndSession = (id: number) => {
   const db = useDb();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: () =>
@@ -205,6 +206,10 @@ export const useEndSession = (id: number) => {
         .update(sessions)
         .set({ endTime: new Date() })
         .where(eq(sessions.id, id)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['session'] });
+      queryClient.invalidateQueries({ queryKey: ['create', 'session'] });
+    },
   });
 };
 
@@ -289,7 +294,6 @@ export const useSessionCalendarDays = (
     seconds: 0,
     milliseconds: 0,
   });
-  console.log(firstDayOfMonth);
   const lastDayOfMonth = setDate(firstDayOfMonth, getDaysInMonth(date));
 
   return useQuery({
