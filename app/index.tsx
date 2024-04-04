@@ -10,26 +10,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Href } from 'expo-router/build/link/href';
 import { useCreateSession } from '../hooks/db/session';
 
-type LinkRowProps = {
-  href: Href;
-  iconName: React.ComponentProps<typeof Ionicons>['name'];
-  text: string;
-};
-
-const LinkRow = ({ href, iconName, text }: LinkRowProps) => {
-  return (
-    <Link href={href} asChild>
-      <TouchableOpacity style={styles.sessionHeader}>
-        <View style={styles.textContent}>
-          <Ionicons name={iconName} color="#eee" size={24} />
-          <Text style={[styles.text, styles.sessionHeaderText]}>{text}</Text>
-        </View>
-        <Ionicons name="caret-forward" color="#eee" />
-      </TouchableOpacity>
-    </Link>
-  );
-};
-
 export default function Home() {
   const mutation = useCreateSession();
 
@@ -44,8 +24,6 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.layout}>
       <Stack.Screen options={{ title: 'Progress' }} />
-      <LinkRow href="/calendar" iconName="calendar" text="Go to calendar" />
-      <LinkRow href="/session" iconName="add" text="Start a session" />
       <View style={styles.bigButtonContainer}>
         <TouchableOpacity style={styles.bigButton} onPress={createSession}>
           <Ionicons name="add" size={48} color="#eee" />
@@ -53,12 +31,14 @@ export default function Home() {
             Start a session
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bigButton}>
-          <Ionicons name="calendar" size={48} color="#eee" />
-          <Text style={[styles.text, styles.sessionHeaderText]}>
-            Go to calendar
-          </Text>
-        </TouchableOpacity>
+        <Link href="/calendar" asChild>
+          <TouchableOpacity style={styles.bigButton}>
+            <Ionicons name="calendar" size={48} color="#eee" />
+            <Text style={[styles.text, styles.sessionHeaderText]}>
+              Go to calendar
+            </Text>
+          </TouchableOpacity>
+        </Link>
         <TouchableOpacity style={styles.bigButton}>
           <Ionicons name="add" size={48} color="#eee" />
           <Text style={[styles.text, styles.sessionHeaderText]}>

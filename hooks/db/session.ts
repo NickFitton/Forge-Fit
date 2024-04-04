@@ -3,6 +3,7 @@ import {
   useQueries,
   useQuery,
   useQueryClient,
+  UseQueryResult,
 } from '@tanstack/react-query';
 import { useDb } from '../../providers/DrizzleDb';
 import {
@@ -11,7 +12,8 @@ import {
   sessions,
   sessionWeightExercises,
 } from '../../db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq, gte, lte } from 'drizzle-orm';
+import { getDate, getDay, getDaysInMonth, set, setDate } from 'date-fns';
 
 export type WeightData = {
   type: 'weight';
@@ -28,7 +30,6 @@ export type CardioData = {
   action: string;
   distance: number;
   timeMins: number;
-  timeSecs: number;
   calories?: number;
 };
 export type ExerciseData = (CardioData | WeightData)[];
@@ -42,7 +43,7 @@ export type Session = {
 export type SessionWeightExercisesQueryData = {
   weight: number;
   id: number;
-  createdAt: string;
+  createdAt: Date;
   sessionId: number;
   exerciseId: number;
   sets: number;
@@ -142,7 +143,7 @@ export const useCreateSessionWeightExercise = (sessionId: number) => {
 
 export type SessionCardioExercisesQueryData = {
   id: number;
-  createdAt: string;
+  createdAt: Date;
   sessionId: number;
   exerciseId: number;
   time: number;
@@ -180,8 +181,8 @@ export const useCreateSessionCardioExercise = (sessionId: number) => {
           ...data.map((d) => ({
             ...d,
             exercise: { name: variables.exercise },
-            id: d.id!,
-            createdAt: d.createdAt!,
+            id: d.id,
+            createdAt: d.createdAt,
           })),
           ...pData,
         ]
@@ -201,7 +202,7 @@ export const useEndSession = (id: number) => {
     mutationFn: () =>
       db
         .update(sessions)
-        .set({ endTime: new Date().toISOString() })
+        .set({ endTime: new Date() })
         .where(eq(sessions.id, id)),
   });
 };
@@ -223,8 +224,8 @@ export const useSession = (id: number) => {
     },
     select: (session) => ({
       id: session.id,
-      startTime: new Date(session.startTime + '+00:00'),
-      endTime: session.endTime ? new Date(session.endTime + '+00:00') : null,
+      startTime: session.startTime,
+      endTime: session.endTime,
     }),
   });
 };
@@ -236,8 +237,11 @@ export const useCreateSession = () => {
   return useMutation({
     mutationKey: ['create', 'session'],
     mutationFn: () =>
-      db.insert(sessions).values({}).returning({ createdId: sessions.id }),
-    onSuccess: () => {
+      db
+        .insert(sessions)
+        .values({})
+        .returning({ createdId: sessions.id, startTime: sessions.startTime }),
+    onSuccess: (d) => {
       client.invalidateQueries({ queryKey: ['sessions'] });
     },
   });
@@ -254,24 +258,56 @@ const mergeExercises = (
   return [
     ...weight.map<WeightData>((exercise) => ({
       type: 'weight',
-      createdAt: new Date(exercise.createdAt + '+00:00'),
+      createdAt: exercise.createdAt,
       action: exercise.exercise.name,
       weight: exercise.weight,
       reps: exercise.reps,
       sets: exercise.sets,
     })),
     ...cardio.map<CardioData>((exercise) => {
-      const mins = Math.floor(exercise.time / 60);
-      const secs = exercise.time % 60;
       return {
         type: 'cardio',
-        createdAt: new Date(exercise.createdAt + '+00:00'),
+        createdAt: exercise.createdAt,
         action: exercise.exercise.name,
         distance: exercise.distance,
-        timeMins: mins,
-        timeSecs: secs,
+        timeMins: exercise.time,
         calories: exercise.calories,
       };
     }),
   ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+};
+
+export const useSessionCalendarDays = (
+  date: Date
+): UseQueryResult<number[]> => {
+  const db = useDb();
+  const firstDayOfMonth = set(date, {
+    date: 1,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
+  console.log(firstDayOfMonth);
+  const lastDayOfMonth = setDate(firstDayOfMonth, getDaysInMonth(date));
+
+  return useQuery({
+    queryKey: ['sessions', firstDayOfMonth],
+    queryFn: () =>
+      db.query.sessions.findMany({
+        where: and(
+          gte(sessions.startTime, firstDayOfMonth),
+          lte(sessions.endTime, lastDayOfMonth)
+        ),
+        columns: {
+          startTime: true,
+        },
+      }),
+    select: (dates) => [
+      ...dates.reduce(
+        (agg, next) => agg.add(getDate(next.startTime)),
+        new Set<number>()
+      ),
+    ],
+  });
 };

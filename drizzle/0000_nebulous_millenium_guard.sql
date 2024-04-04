@@ -7,7 +7,7 @@ CREATE TABLE `exercises` (
 --> statement-breakpoint
 CREATE TABLE `sessionCardioExercises` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`createdAt` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
+	`createdAt` integer DEFAULT (unixepoch()),
 	`sessionId` integer NOT NULL,
 	`exerciseId` integer NOT NULL,
 	`time` real NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE `sessionCardioExercises` (
 --> statement-breakpoint
 CREATE TABLE `sessionWeightExercises` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`createdAt` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
+	`createdAt` integer DEFAULT (unixepoch()),
 	`sessionId` integer NOT NULL,
 	`exerciseId` integer NOT NULL,
 	`weight` real NOT NULL,
@@ -31,8 +31,8 @@ CREATE TABLE `sessionWeightExercises` (
 --> statement-breakpoint
 CREATE TABLE `sessions` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`startTime` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
-	`endTime` text
+	`startTime` integer DEFAULT (unixepoch()),
+	`endTime` integer
 );
 --> statement-breakpoint
 CREATE INDEX `type` ON `exercises` (`type`);--> statement-breakpoint

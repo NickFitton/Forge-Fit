@@ -24,10 +24,10 @@ export const sessions = sqliteTable(
   'sessions',
   {
     id: integer('id').primaryKey(),
-    startTime: text('startTime')
-      .notNull()
-      .default(sql`(CURRENT_TIMESTAMP)`),
-    endTime: text('endTime'),
+    startTime: integer('startTime', { mode: 'timestamp' }).default(
+      sql`(unixepoch())`
+    ),
+    endTime: integer('endTime', { mode: 'timestamp' }),
   },
   (session) => ({
     timeIdx: index('timeIdx').on(session.startTime, session.endTime),
@@ -38,9 +38,9 @@ export const sessionWeightExercises = sqliteTable(
   'sessionWeightExercises',
   {
     id: integer('id').primaryKey(),
-    createdAt: text('createdAt')
-      .notNull()
-      .default(sql`(CURRENT_TIMESTAMP)`),
+    createdAt: integer('createdAt', { mode: 'timestamp' }).default(
+      sql`(unixepoch())`
+    ),
     sessionId: integer('sessionId')
       .references(() => sessions.id)
       .notNull(),
@@ -61,9 +61,9 @@ export const sessionCardioExercises = sqliteTable(
   'sessionCardioExercises',
   {
     id: integer('id').primaryKey(),
-    createdAt: text('createdAt')
-      .notNull()
-      .default(sql`(CURRENT_TIMESTAMP)`),
+    createdAt: integer('createdAt', { mode: 'timestamp' }).default(
+      sql`(unixepoch())`
+    ),
     sessionId: integer('sessionId')
       .references(() => sessions.id)
       .notNull(),

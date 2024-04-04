@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "14e719ea-2ae6-47e5-ae5c-38a06a976ed9",
+  "id": "3ce16429-ae69-462c-ba32-925cdb09e84a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "exercises": {
@@ -61,11 +61,11 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(CURRENT_TIMESTAMP)"
+          "default": "(unixepoch())"
         },
         "sessionId": {
           "name": "sessionId",
@@ -162,11 +162,11 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(CURRENT_TIMESTAMP)"
+          "default": "(unixepoch())"
         },
         "sessionId": {
           "name": "sessionId",
@@ -263,15 +263,15 @@
         },
         "startTime": {
           "name": "startTime",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(CURRENT_TIMESTAMP)"
+          "default": "(unixepoch())"
         },
         "endTime": {
           "name": "endTime",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
