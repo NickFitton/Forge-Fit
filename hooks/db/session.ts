@@ -8,16 +8,10 @@ import { useDb } from '../../providers/DrizzleDb';
 import {
   exercises,
   sessionCardioExercises,
-  sessionCardioRelations,
   sessions,
   sessionWeightExercises,
 } from '../../db/schema';
 import { eq } from 'drizzle-orm';
-import {
-  SQLiteInsertBase,
-  SQLiteTableWithColumns,
-  SQLiteColumn,
-} from 'drizzle-orm/sqlite-core';
 
 export type WeightData = {
   type: 'weight';
@@ -126,6 +120,62 @@ export const useCreateSessionWeightExercise = (sessionId: number) => {
     onSuccess: (data, variables) => {
       client.setQueryData<SessionWeightExercisesQueryData>(
         ['sessions', sessionId, 'sessionWeightExercises'],
+        (pData) => {
+          return [
+            ...data.map((d) => ({
+              ...d,
+              exercise: { name: variables.exercise },
+              id: d.id!,
+              createdAt: d.createdAt!,
+            })),
+            ...pData,
+          ];
+        }
+      );
+      data;
+    },
+    onError: (e) => {
+      console.error(e);
+    },
+  });
+};
+
+export type SessionCardioExercisesQueryData = {
+  id: number;
+  createdAt: string;
+  sessionId: number;
+  exerciseId: number;
+  time: number;
+  distance: number;
+  calories?: number;
+  exercise: {
+    name: string;
+  };
+}[];
+
+export type InsertSessionCardioExercise =
+  typeof sessionCardioExercises.$inferInsert & { exerciseId: number };
+export type SelectSessionCardioExercise =
+  typeof sessionCardioExercises.$inferSelect;
+
+export const useCreateSessionCardioExercise = (sessionId: number) => {
+  const db = useDb();
+  const client = useQueryClient();
+
+  return useMutation<
+    InsertSessionCardioExercise[],
+    unknown,
+    Omit<InsertSessionCardioExercise, 'sessionId'> & { exercise: string }
+  >({
+    mutationKey: ['create', 'sessions', sessionId, 'sessionCardioExercises'],
+    mutationFn: (exercise) =>
+      db
+        .insert(sessionCardioExercises)
+        .values({ ...exercise, sessionId })
+        .returning(),
+    onSuccess: (data, variables) => {
+      client.setQueryData<SessionCardioExercisesQueryData>(
+        ['sessions', sessionId, 'sessionCardioExercises'],
         (pData) => {
           return [
             ...data.map((d) => ({

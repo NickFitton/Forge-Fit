@@ -12,7 +12,7 @@ CREATE TABLE `sessionCardioExercises` (
 	`exerciseId` integer NOT NULL,
 	`time` real NOT NULL,
 	`distance` real NOT NULL,
-	`calories` integer NOT NULL,
+	`calories` integer,
 	FOREIGN KEY (`sessionId`) REFERENCES `sessions`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`exerciseId`) REFERENCES `exercises`(`id`) ON UPDATE no action ON DELETE no action
 );

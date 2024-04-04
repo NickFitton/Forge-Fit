@@ -5,8 +5,12 @@ import { eq } from 'drizzle-orm';
 
 export type ExerciseType = 'cardio' | 'weight';
 export const ALL_EXERCISE_TYPES: ExerciseType[] = ['cardio', 'weight'];
-export type ExerciseCategory = 'machines' | 'free_weights';
-export const ALL_EXERCISE_CATEGORIES: string[] = ['machines', 'free_weights'];
+export type ExerciseCategory = 'machines' | 'free_weights' | 'track';
+export const ALL_EXERCISE_CATEGORIES: string[] = [
+  'machines',
+  'free_weights',
+  'track',
+];
 
 export type ExerciseGroups = {
   name: string;
@@ -25,7 +29,7 @@ export const useExercises = (type: ExerciseType) => {
   const db = useDb();
 
   return useQuery<(typeof exercises.$inferSelect)[], unknown, ExerciseGroups>({
-    queryKey: ['exercises'],
+    queryKey: ['exercises', type],
     queryFn: () => db.select().from(exercises).where(eq(exercises.type, type)),
     select: (results) => {
       const groupByCategory = results.map(fromSelectEntity).reduce(

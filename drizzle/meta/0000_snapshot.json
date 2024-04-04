@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "a5f835e2-f35c-46c8-918e-33783d9dad3b",
+  "id": "14e719ea-2ae6-47e5-ae5c-38a06a976ed9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "exercises": {
@@ -99,7 +99,7 @@
           "name": "calories",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },

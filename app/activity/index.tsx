@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   Text,
   TextInput,
@@ -22,11 +22,6 @@ import {
 } from '../../hooks/db/exercises';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCreateSessionWeightExercise } from '../../hooks/db/session';
-import {
-  useGlobalSearchParams,
-  usePathname,
-  useRouteInfo,
-} from 'expo-router/build/hooks';
 
 type ExerciseSet = { name: string; data: ExerciseInfo[] };
 type ExerciseInfo = {
@@ -77,7 +72,6 @@ export default function Weight() {
   const [openItem, setOpenItem] = useState<[string, string]>();
   const [viewTop, setViewTop] = useState<number>();
   const { data: exercises, isLoading, isError, error } = useExercises('weight');
-  console.log(params);
   const mutate = useCreateSessionWeightExercise(sessionId);
 
   const toggleActivity = (item: [string, string]) => {

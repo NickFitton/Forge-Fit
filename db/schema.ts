@@ -72,7 +72,7 @@ export const sessionCardioExercises = sqliteTable(
       .notNull(),
     time: real('time').notNull(),
     distance: real('distance').notNull(),
-    calories: integer('calories').notNull(),
+    calories: integer('calories'),
   },
   (exercise) => ({
     sessionIdx: index('cardioSessionIdx').on(exercise.sessionId),
