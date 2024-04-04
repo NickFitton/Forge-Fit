@@ -14,6 +14,7 @@ import {
 } from '../../db/schema';
 import { and, eq, gte, lte } from 'drizzle-orm';
 import { getDate, getDay, getDaysInMonth, set, setDate } from 'date-fns';
+import { ActivityData } from '../../api/activity/types';
 
 export type WeightData = {
   type: 'weight';
@@ -311,3 +312,122 @@ export const useSessionCalendarDays = (
     ],
   });
 };
+export type SessionData = {
+  data: ActivityData[];
+  startTime: Date;
+  endTime: Date;
+};
+
+export const useSessionsInDay = (date: Date): UseQueryResult<SessionData[]> => {
+  const db = useDb();
+  const startOfDay = set(date, {
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
+  const endOfDay = set(date, {
+    hours: 23,
+    minutes: 59,
+    seconds: 59,
+    milliseconds: 999,
+  });
+
+  return useQuery({
+    queryKey: ['sessions', 'dates', startOfDay],
+    queryFn: () =>
+      db.query.sessions.findMany({
+        where: and(
+          gte(sessions.startTime, startOfDay),
+          lte(sessions.endTime, endOfDay)
+        ),
+        with: {
+          sessionWeightExercises: {
+            columns: {
+              createdAt: true,
+              weight: true,
+              sets: true,
+              reps: true,
+            },
+            with: {
+              exercise: {
+                columns: {
+                  name: true,
+                  id: true,
+                },
+              },
+            },
+          },
+          sessionCardioExercises: {
+            columns: {
+              createdAt: true,
+              time: true,
+              distance: true,
+              calories: true,
+            },
+            with: {
+              exercise: {
+                columns: {
+                  name: true,
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+    select: (data) =>
+      data.map((session) => ({
+        data: [
+          ...session.sessionCardioExercises.map(mapCardioToActivity),
+          ...session.sessionWeightExercises.map(mapWeightToActivity),
+        ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
+        startTime: session.startTime,
+        endTime: session.endTime,
+      })),
+  });
+};
+type SessionCardioEntityData = {
+  createdAt: Date;
+  time: number;
+  distance: number;
+  calories: number;
+  exercise: {
+    id: number;
+    name: string;
+  };
+};
+
+type SessionWeightEntityData = {
+  createdAt: Date;
+  weight: number;
+  sets: number;
+  reps: number;
+  exercise: {
+    id: number;
+    name: string;
+  };
+};
+
+const mapCardioToActivity = (
+  entity: SessionCardioEntityData
+): ActivityData => ({
+  type: 'cardio',
+  action: entity.exercise.name,
+  createdAt: entity.createdAt,
+  distance: entity.distance,
+  timeMins: entity.time,
+  timeSecs: 0,
+  calories: entity.calories,
+});
+const mapWeightToActivity = (
+  entity: SessionWeightEntityData
+): ActivityData => ({
+  type: 'weight',
+  action: entity.exercise.name,
+  weight: entity.weight,
+  reps: entity.reps,
+  sets: entity.sets,
+  createdAt: entity.createdAt,
+  failed: false,
+});
