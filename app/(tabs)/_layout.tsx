@@ -1,8 +1,10 @@
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Tabs } from 'expo-router';
+import { Link, Tabs, useNavigation } from 'expo-router';
+import { Button } from 'react-native';
 
 export default function TabLayout() {
+  const nav = useNavigation();
   return (
     <Tabs
       screenOptions={{
@@ -31,6 +33,9 @@ export default function TabLayout() {
         name="calendar"
         options={{
           title: 'Calendar',
+          headerShown: true,
+          headerStyle: { backgroundColor: '#2c7a95' },
+          headerTitleStyle: { color: '#eee' },
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               size={28}
@@ -43,7 +48,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="sessions"
         options={{
-          title: 'Add',
+          title: 'Create Session',
+          headerShown: true,
+          headerStyle: { backgroundColor: '#2c7a95' },
+          headerTitleStyle: { color: '#eee' },
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               size={28}
@@ -54,9 +62,33 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="workouts"
+        options={{
+          title: 'Workouts',
+          headerShown: true,
+          headerStyle: { backgroundColor: '#2c7a95' },
+          headerTitleStyle: { color: '#eee' },
+          headerRight: () => (
+            <Link href={`/create/workout`} asChild>
+              <Button title="Create" />
+            </Link>
+          ),
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              size={28}
+              name={focused ? 'barbell' : 'barbell-outline'}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="exercises"
         options={{
           title: 'Exercises',
+          headerShown: true,
+          headerStyle: { backgroundColor: '#2c7a95' },
+          headerTitleStyle: { color: '#eee' },
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               size={28}

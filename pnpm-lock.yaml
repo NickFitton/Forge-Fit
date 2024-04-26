@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@react-native-async-storage/async-storage':
+    specifier: 1.21.0
+    version: 1.21.0(react-native@0.73.6)
   '@react-navigation/material-top-tabs':
     specifier: ^6.6.13
     version: 6.6.13(@react-navigation/native@6.1.17)(react-native-pager-view@6.2.3)(react-native-tab-view@3.5.2)(react-native@0.73.6)(react@18.2.0)
@@ -32,6 +35,9 @@ dependencies:
   expo-constants:
     specifier: ~15.4.5
     version: 15.4.5(expo@50.0.14)
+  expo-crypto:
+    specifier: ~12.8.1
+    version: 12.8.1(expo@50.0.14)
   expo-linking:
     specifier: ~6.2.2
     version: 6.2.2(expo@50.0.14)
@@ -2541,6 +2547,15 @@ packages:
       react: 18.2.0
     dev: false
 
+  /@react-native-async-storage/async-storage@1.21.0(react-native@0.73.6):
+    resolution: {integrity: sha512-JL0w36KuFHFCvnbOXRekqVAUplmOyT/OuCQkogo6X98MtpSaJOKEAeZnYO8JB0U/RIEixZaGI5px73YbRm/oag==}
+    peerDependencies:
+      react-native: ^0.0.0-0 || >=0.60 <1.0
+    dependencies:
+      merge-options: 3.0.4
+      react-native: 0.73.6(@babel/core@7.20.2)(@babel/preset-env@7.24.3)(react@18.2.0)
+    dev: false
+
   /@react-native-community/cli-clean@12.3.6:
     resolution: {integrity: sha512-gUU29ep8xM0BbnZjwz9MyID74KKwutq9x5iv4BCr2im6nly4UMf1B1D+V225wR7VcDGzbgWjaezsJShLLhC5ig==}
     dependencies:
@@ -4651,6 +4666,15 @@ packages:
       - supports-color
     dev: false
 
+  /expo-crypto@12.8.1(expo@50.0.14):
+    resolution: {integrity: sha512-EJEzmfBUSkGfALTlZRKUbh1RMKF7mWI12vkhO2w6bhGO4bjgGB8XzUHgLfrvSjphDFMx/lwaR6bAQDmXKO9UkQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      base64-js: 1.5.1
+      expo: 50.0.14(@babel/core@7.20.2)(@react-native/babel-preset@0.73.21)
+    dev: false
+
   /expo-file-system@16.0.8(expo@50.0.14):
     resolution: {integrity: sha512-yDbVT0TUKd7ewQjaY5THum2VRFx2n/biskGhkUmLh3ai21xjIVtaeIzHXyv9ir537eVgt4ReqDNWi7jcXjdUcA==}
     peerDependencies:
@@ -5470,6 +5494,11 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
+  /is-plain-obj@2.1.0:
+    resolution: {integrity: sha512-YWnfyRwxL/+SsrWYfOpUtz5b3YD+nyfkHvjbcanzk8zgyO4ASD67uVMRt8k5bM4lLMDnXfriRhOpemw+NfT1eA==}
+    engines: {node: '>=8'}
+    dev: false
+
   /is-plain-object@2.0.4:
     resolution: {integrity: sha512-h5PpgXkWitc38BBMYawTYMWJHFZJVnBquFE57xFpjB8pJFiF6gZ+bU+WyI/yqXiFR5mdLsgYNaPe8uao6Uv9Og==}
     engines: {node: '>=0.10.0'}
@@ -6011,6 +6040,13 @@ packages:
 
   /memory-cache@0.2.0:
     resolution: {integrity: sha512-OcjA+jzjOYzKmKS6IQVALHLVz+rNTMPoJvCztFaZxwG14wtAW7VRZjwTQu06vKCYOxh4jVnik7ya0SXTB0W+xA==}
+    dev: false
+
+  /merge-options@3.0.4:
+    resolution: {integrity: sha512-2Sug1+knBjkaMsMgf1ctR1Ujx+Ayku4EdJN4Z+C2+JzoeF7A3OZ9KM2GY0CpQS51NR61LTurMJrRKPhSs3ZRTQ==}
+    engines: {node: '>=10'}
+    dependencies:
+      is-plain-obj: 2.1.0
     dev: false
 
   /merge-stream@2.0.0:

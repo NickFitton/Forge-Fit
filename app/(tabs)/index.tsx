@@ -1,5 +1,5 @@
-import { router, Stack, Link } from 'expo-router';
-import React from 'react';
+import { router, Stack, Link, useFocusEffect } from 'expo-router';
+import React, { useCallback } from 'react';
 import {
   SafeAreaView,
   Text,
@@ -9,8 +9,20 @@ import {
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useCreateSession } from '../../hooks/db/session';
+import { usePreloadExercises } from '../../hooks/db/preload';
 
 export default function Home() {
+  const { mutate, status, error: mutationError } = usePreloadExercises();
+  useFocusEffect(
+    useCallback(() => {
+      mutate(null, {
+        onSuccess: () => console.log('Success!'),
+        onError: (e) => {
+          console.log('Error :('), console.error(e);
+        },
+      });
+    }, [mutate])
+  );
   const mutation = useCreateSession();
 
   const createSession = () => {

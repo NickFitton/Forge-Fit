@@ -9,6 +9,5 @@ const styles = StyleSheet.create({
   header: {
     color: '#eee',
     fontSize: 16,
-    marginHorizontal: 8,
   },
 });

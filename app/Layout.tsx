@@ -1,21 +1,15 @@
-import { Stack, router } from 'expo-router';
-import { Button, SafeAreaView, Text } from 'react-native';
-import { openDatabaseSync } from 'expo-sqlite/next';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { Stack } from 'expo-router';
+import { SafeAreaView, Text } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import migrations from '../drizzle/migrations';
 import { DrizzleDbProvider } from '../providers/DrizzleDb';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import * as schema from '../db/schema';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
-
-const expoDb = openDatabaseSync('db.db');
-const db = drizzle(expoDb, { schema });
-const queryClient = new QueryClient();
+import { db, queryClient, CancelButton } from './_layout';
 
 export default function Layout() {
   const { success, error } = useMigrations(db, migrations);
-
+  const { mutate, status } = usePreloadExercises(db);
   if (error) {
     return (
       <SafeAreaView>
@@ -52,11 +46,10 @@ export default function Layout() {
             }}
           />
           <Stack.Screen
-            name="create/workout"
+            name="create"
             options={{
               presentation: 'modal',
-              title: 'New Workout',
-              headerLeft: () => <CancelButton />,
+              headerShown: false,
             }}
           />
         </Stack>
@@ -64,7 +57,3 @@ export default function Layout() {
     </QueryClientProvider>
   );
 }
-
-const CancelButton = () => {
-  return <Button title="Cancel" onPress={router.back} />;
-};

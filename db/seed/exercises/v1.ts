@@ -1,0 +1,63 @@
+import { ExerciseDataset } from './types';
+
+const EXERCISE_DATASET_V1: ExerciseDataset = {
+  cardio: {
+    cardio_machines: [
+      'Upright Bike',
+      'Treadmill',
+      'Stair Climber',
+      'Rower',
+      'Recumbent Exercise Bike',
+      'Indoor Cycle',
+      'HIIT Trainer',
+      'Cross Trainer',
+    ],
+    track: ['Run', 'Row', 'Cycle', 'Walk', 'Hike'],
+  },
+  weight: {
+    free_weights: [
+      'Squat',
+      'Leg press',
+      'Lunge',
+      'Deadlift',
+      'Leg extension',
+      'Leg curl',
+      'Standing calf raise',
+      'Seated calf raise',
+      'Incline bench press',
+      'Decline bench press',
+      'Bench press',
+      'Chest fly',
+      'Push-up',
+      'Pull-down',
+      'Pull-up',
+      'Bent-over row',
+      'Upright row',
+      'Shoulder press',
+      'Lateral raise',
+      'Shoulder shrug',
+      'Pushdown',
+      'Triceps extension',
+      'Biceps curl',
+      'Crunch',
+      'Russian twist',
+      'Leg raise',
+      'Back extension',
+    ],
+    machines: [
+      'Seated arm extension',
+      'Seated arm curl',
+      'Seated press',
+      'Seated overhead press',
+      'Seated lat pulldown',
+      'Seated leg curl',
+      'Lying leg curl',
+      'Seated arm row',
+      'Assisted close-grip pull-up',
+      'Rear leg extension',
+      'Hanging leg raise',
+    ],
+  },
+};
+
+export default EXERCISE_DATASET_V1;

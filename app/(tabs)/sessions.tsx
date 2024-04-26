@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   Text,
   FlatList,
@@ -29,11 +29,13 @@ export default function Session() {
     reset,
   } = useCreateSession();
 
-  useFocusEffect(() => {
-    if (!currentSession) {
-      mutate();
-    }
-  });
+  useFocusEffect(
+    useCallback(() => {
+      if (!currentSession) {
+        mutate();
+      }
+    }, [currentSession, mutate])
+  );
 
   switch (status) {
     case 'error':
@@ -125,12 +127,6 @@ const SessionCreated = ({
     <Screen>
       <Stack.Screen
         options={{
-          headerShown: true,
-          title: 'Create Session',
-          headerTitleStyle: { color: '#eee' },
-          headerStyle: {
-            backgroundColor: '#2c7a95',
-          },
           headerRight: () => <SubmitButton onSubmit={onSubmit} />,
         }}
       />

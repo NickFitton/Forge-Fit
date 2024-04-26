@@ -5,11 +5,16 @@ import { eq } from 'drizzle-orm';
 
 export type ExerciseType = 'cardio' | 'weight';
 export const ALL_EXERCISE_TYPES: ExerciseType[] = ['cardio', 'weight'];
-export type ExerciseCategory = 'machines' | 'free_weights' | 'track';
+export type ExerciseCategory =
+  | 'machines'
+  | 'free_weights'
+  | 'track'
+  | 'cardio_machines';
 export const ALL_EXERCISE_CATEGORIES: string[] = [
   'machines',
   'free_weights',
   'track',
+  'cardio_machines',
 ];
 
 export type ExerciseGroups = {

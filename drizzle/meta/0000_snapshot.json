@@ -1,9 +1,40 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "3ce16429-ae69-462c-ba32-925cdb09e84a",
+  "id": "13ff88e8-8c26-451d-ad6c-59503033e8ce",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
+    "exerciseDatasets": {
+      "name": "exerciseDatasets",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "version": {
+          "name": "version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "exerciseDatasets_version_unique": {
+          "name": "exerciseDatasets_version_unique",
+          "columns": [
+            "version"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "exercises": {
       "name": "exercises",
       "columns": {

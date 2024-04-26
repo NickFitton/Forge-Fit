@@ -1,3 +1,8 @@
+CREATE TABLE `exerciseDatasets` (
+	`id` integer PRIMARY KEY NOT NULL,
+	`version` text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE `exercises` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
@@ -35,6 +40,7 @@ CREATE TABLE `sessions` (
 	`endTime` integer
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `exerciseDatasets_version_unique` ON `exerciseDatasets` (`version`);--> statement-breakpoint
 CREATE INDEX `type` ON `exercises` (`type`);--> statement-breakpoint
 CREATE INDEX `cardioSessionIdx` ON `sessionCardioExercises` (`sessionId`);--> statement-breakpoint
 CREATE INDEX `cardioExerciseIdx` ON `sessionCardioExercises` (`exerciseId`);--> statement-breakpoint

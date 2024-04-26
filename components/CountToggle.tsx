@@ -1,6 +1,29 @@
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+export type RawCountToggleProps = {
+  onAdd: () => void;
+  onRemove: () => void;
+};
 
+export const RawCountToggle = ({ onAdd, onRemove }: RawCountToggleProps) => {
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={[styles.button, styles.leftButton]}
+        onPress={onRemove}
+      >
+        <Ionicons name="caret-back" color="#eee" size={24} />
+      </TouchableOpacity>
+      <View style={styles.divider} />
+      <TouchableOpacity
+        onPress={onAdd}
+        style={[styles.button, styles.rightButton]}
+      >
+        <Ionicons name="caret-forward" color="#eee" size={24} />
+      </TouchableOpacity>
+    </View>
+  );
+};
 export type CountToggleProps = {
   onValueChange: React.Dispatch<React.SetStateAction<number>>;
 };

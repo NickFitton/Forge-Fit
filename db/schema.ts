@@ -20,6 +20,11 @@ export const exercises = sqliteTable(
   })
 );
 
+export const exerciseDatasetVersions = sqliteTable('exerciseDatasets', {
+  id: integer('id').primaryKey(),
+  version: text('version').notNull().unique(),
+});
+
 export const sessions = sqliteTable(
   'sessions',
   {
